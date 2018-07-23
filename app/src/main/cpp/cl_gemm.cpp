@@ -35,7 +35,10 @@ clPeak::runGemmTest(cl::CommandQueue &queue, cl::Program &prog, device_info_t &d
                 4, 3,
                 2, 1
         };
-        output_C = new float[MAX_M * MAX_N];
+        output_C = new float[MAX_M * MAX_N] {
+                0, 0,
+                0, 0
+        };
         //populate(input_A, MAX_M * MAX_K);
         //populate(input_B, MAX_K * MAX_N);
         for (int i = 0; i < 16; i++) {
@@ -64,16 +67,19 @@ clPeak::runGemmTest(cl::CommandQueue &queue, cl::Program &prog, device_info_t &d
         timed = timer.stopAndTime();
         LOGD("k*n enqueue write buffer: %lf", timed / TEST_CNT);
 
-        cl::Kernel kernel_gemm(prog, "myGEMM1TransVec");
+        cl::Kernel kernel_gemm(prog, "myGEMM1Row");
         kernel_gemm.setArg(0, MAX_M);
         kernel_gemm.setArg(1, MAX_N);
-        kernel_gemm.setArg(2, MAX_K / 4);
+        kernel_gemm.setArg(2, MAX_K);
         kernel_gemm.setArg(3, BufA);
         kernel_gemm.setArg(4, BufB);
         kernel_gemm.setArg(5, BufC);
 
-        globalSize = (MAX_M, MAX_N);
-        localSize = (1, 1);
+        globalSize = cl::NDRange(MAX_M, MAX_N);
+        localSize = cl::NullRange;
+
+        int dim = globalSize.dimensions();
+        LOGI("global dim: %u", dim);
 
         timer.start();
         for (int i = 0; i < TEST_CNT; i++) {

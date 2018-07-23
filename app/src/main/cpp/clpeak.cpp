@@ -166,7 +166,7 @@ int clPeak::runAll()
         //LOGI("start runComputeInt");
         //runComputeInteger(queue, prog, devInfo);
         LOGI("start run gemm");
-        runGemmTest(queue, prog_gemm, devInfo);
+        runGemmRow(queue, prog_gemm, devInfo);
         //LOGI("start runGlobalBandwidthTest");
         //runGlobalBandwidthTest(queue, prog, devInfo);
         //LOGI("start runComputeSP");
@@ -240,6 +240,11 @@ float clPeak::run_kernel(cl::CommandQueue &queue, cl::Kernel &kernel, cl::NDRang
 void clPeak::print_callback(const char *buffer, size_t length, size_t final, void *user_data) {
   char* log = new char[length + 1];
   strncpy(log, buffer, length);
-  LOGD("Hello Host print_callback");
+  log[length + 1] = '\0';
+  LOGD("%s", log);
+  delete[] log;
 }
 
+
+int clPeak::runUnitTest() {
+}

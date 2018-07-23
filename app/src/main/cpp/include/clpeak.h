@@ -48,6 +48,8 @@ public:
   float run_kernel(cl::CommandQueue &queue, cl::Kernel &kernel, cl::NDRange &globalSize, cl::NDRange &localSize, int iters);
 
   int runGemmTest(cl::CommandQueue &queue, cl::Program &prog, device_info_t &devInfo);
+  int runGemmRow(cl::CommandQueue &queue, cl::Program &prog, device_info_t &devInfo);
+
   int runGlobalBandwidthTest(cl::CommandQueue &queue, cl::Program &prog, device_info_t &devInfo);
 
   int runComputeSP(cl::CommandQueue &queue, cl::Program &prog, device_info_t &devInfo);
@@ -63,6 +65,8 @@ public:
   int runKernelLatency(cl::CommandQueue &queue, cl::Program &prog, device_info_t &devInfo);
 
   int runAll();
+
+  int runUnitTest();
 };
 
 #endif  // CLPEAK_HPP

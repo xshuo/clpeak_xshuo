@@ -315,6 +315,7 @@ __kernel void myGEMM1TransVec(const int M, const int N, const int K,
 #else
 
 const char* cl_gemm_str= R"CLSRC(
+#pragma OPENCL EXTENSION cl_arm_printf : enable
 __kernel void myGEMM1Col(const int M, const int N, const int K,
                       const __global float* A,
                       const __global float* B,
@@ -326,14 +327,40 @@ __kernel void myGEMM1Col(const int M, const int N, const int K,
     const int globalCol = get_global_id(1); // Col ID of C (0..N)
  
     // Compute a single element (loop over K)
-    float acc = 0.0f;
-    for (int k=0; k<K; k++) {
-        acc += A[k*M + globalRow] * B[globalCol*K + k];
-    }
+    if (globalRow < M && globalCol < N) {
+        float acc = 0.0f;
+        for (int k=0; k<K; k++) {
+            acc += A[k*M + globalRow] * B[globalCol*K + k];
+        }
  
-    // Store the result
-    C[globalCol*M + globalRow] = acc;
+        // Store the result
+        C[globalCol*M + globalRow] = acc;
+    }
 }
+
+__kernel void myGEMM1Row(const int M, const int N, const int K,
+                      const __global float* A,
+                      const __global float* B,
+                      __global float* C)
+{
+
+    // Thread identifiers
+    const int globalRow = get_global_id(0); // Row ID of C (0..M)
+    const int globalCol = get_global_id(1); // Col ID of C (0..N)
+
+    //printf("GEMM_ROW: %d %d\n", globalRow, globalCol);
+    // Compute a single element (loop over K)
+    if (globalRow < M && globalCol < N) {
+        float acc = 0.0f;
+        for (int k=0; k<K; k++) {
+            acc += A[globalRow * K + k] * B[k * N + globalCol];
+        }
+
+        // Store the result
+        C[globalRow * N + globalCol] = acc;
+    }
+}
+
 
 __kernel void myGEMM1(const int M, const int N, const int K,
                       const __global float4* A,
