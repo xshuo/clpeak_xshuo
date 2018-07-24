@@ -90,8 +90,9 @@ void populate(float *ptr, uint N)
 
   for(int i=0; i<(int)N; i++)
   {
-    ptr[i] = (float)(rand() % 1000);
+    //ptr[i] = (float)(rand() % 1000);
     //ptr[i] = (float)i;
+    ptr[i] = 1;
   }
 }
 

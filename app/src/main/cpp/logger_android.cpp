@@ -150,3 +150,17 @@ void logger::xmlRecord(string tag, float value)
         xmlFile.flush();
     }
 }
+
+void logger::log2File(const float *data, int M, int N) {
+    ofstream f_output_stream;
+    f_output_stream.open("/sdcard/log_Gemm1Row.txt");
+    for (int i = 0; i < M; i++) {
+        for (int j = 0; j < N; j++) {
+            f_output_stream << *(data + i * N + j) << " ";
+        }
+        f_output_stream << std::endl;
+    }
+    //f_output_stream << "=======================" << std::endl;
+    f_output_stream.flush();
+    f_output_stream.close();
+}

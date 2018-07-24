@@ -50,6 +50,8 @@ public:
 
   void xmlRecord(string tag, string value);
   void xmlRecord(string tag, float value);
+
+  void log2File(const float* data, int M, int N);
 };
 
 #endif  // LOGGER_HPP
