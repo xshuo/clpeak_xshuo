@@ -25,7 +25,7 @@ clPeak::runGemmRow(cl::CommandQueue &queue, cl::Program &prog, device_info_t &de
         output_C = new float[MAX_M * MAX_N];
         populate(input_A, MAX_M * MAX_K);
         populate(input_B, MAX_K * MAX_N);
-        memset(output_C, 0, sizeof(output_C));
+        memset(output_C, 0, sizeof(float) * MAX_M * MAX_N);
 
         //for (int i = 0; i < MAX_M * MAX_N; i++) {
         //    output_C[i] = i;
@@ -87,10 +87,10 @@ clPeak::runGemmRow(cl::CommandQueue &queue, cl::Program &prog, device_info_t &de
             queue.enqueueReadBuffer(BufC, CL_TRUE, 0, MAX_M * MAX_N * sizeof(float), output_C);
             queue.finish();
             timed = timer.stopAndTime();
-            log->log2File(output_C, MAX_M, MAX_N);
             LOGI("gemm compute read buffer m*n: %lf ms", timed / 1e6f);
-            memcpy(input_A, output_C, sizeof(output_C));
+            memcpy(input_A, output_C, sizeof(float) * MAX_M * MAX_N);
         }
+        log->log2File(output_C, MAX_M, MAX_N);
 
         if (input_A) delete[] input_A;
         if (input_B) delete[] input_B;
